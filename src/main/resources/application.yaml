@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/project?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: lrp123456
+logging:
+  level:
+    com.byr: debug
+  pattern:
+    dateformat: HH:mm:ss
+#mybatis:
+#  mapper-locations: classpath*:mapper/*.xml
+mybatis-plus:
+  type-aliases-package: com.byr.project.domain.po
+  mapper-locations: "classpath*:/mapper/**/*.xml"
+  configuration:
+    map-underscore-to-camel-case: true # 是否开启下划线和驼峰的映射
+    cache-enabled: false # 是否开启二级缓存
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    db-config:
+      id-type: assign_id # id为雪花算法生成      update-strategy: not_null # 更新策略：只更新非空字段
+      update-strategy: not_null # 更新策略：只更新非空字段
+      logic-delete-field: deleted
+knife4j:
+  enable: true
+  openapi:
+    title: 用户管理接口文档
+    description: "用户管理接口文档"
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.byr.project.controller
+
+
