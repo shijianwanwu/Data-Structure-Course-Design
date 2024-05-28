@@ -28,13 +28,13 @@ public class Sightseeing implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private String name;
+    private String name;//名称
 
-    private BigDecimal rating;
+    private BigDecimal rating;//评价
 
-    private Integer popularity;
+    private Integer popularity;//热度
 
-    private String category;
+    private String category;//类别
 
     private String description;
 

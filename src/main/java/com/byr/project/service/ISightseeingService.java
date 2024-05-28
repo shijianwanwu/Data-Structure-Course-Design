@@ -18,4 +18,5 @@ public interface ISightseeingService extends IService<Sightseeing> {
     public Sightseeing getSightseeingByName(String name);
 
 
+    List<Sightseeing> searchSightseeing(String name, String category);
 }

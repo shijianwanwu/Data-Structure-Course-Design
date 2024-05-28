@@ -8,11 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,7 +32,13 @@ public class SightseeingController {
     public Sightseeing getSightseeingByName(@ApiParam("景区名称") @PathVariable String name) {
         return sightseeingService.getSightseeingByName(name);
     }
-
+    @ApiOperation("根据名称、类别查询景点，并按照热度和评价排序")
+    @GetMapping("/searchSightseeing")
+    public List<Sightseeing> searchSightseeing(@RequestParam(required = false) String name,
+                                               @RequestParam(required = false) String category) {
+        // 调用服务方法执行查询和排序
+        return sightseeingService.searchSightseeing(name, category);
+    }
     @ApiOperation("获取所有景区接口")
     @GetMapping("/all")
     public List<Sightseeing> getAllSightseeing() {
