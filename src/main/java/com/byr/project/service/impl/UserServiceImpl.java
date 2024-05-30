@@ -39,4 +39,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return null;
     }
+
+    @Override
+    public String getUsername(Integer userId) {
+        User user = lambdaQuery()
+                .eq(User::getId, userId)
+                .one();
+        if (user != null){
+            return user.getUsername();
+        }
+        return null;
+    }
 }
