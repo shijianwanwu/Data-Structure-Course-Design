@@ -53,4 +53,17 @@ public class UserController {
         }
         return Result.fail(20002,"用户名或密码错误");
     }
+
+    /**
+     * 根据用户名返回用户id
+     */
+    @ApiOperation("根据用户名返回用户id")
+    @GetMapping("/getUserId")
+    public Result<Integer> getUserId(@ApiParam("用户名") @RequestParam String username){
+        Integer userId = userService.getUserId(username);
+        if(userId != null){
+            return Result.success(userId);
+        }
+        return Result.fail(20002,"用户名或密码错误");
+    }
 }

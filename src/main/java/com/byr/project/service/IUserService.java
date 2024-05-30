@@ -18,4 +18,6 @@ public interface IUserService extends IService<User> {
     Map<String, Object> login(User user);
 
     String getUsername(Integer userId);
+
+    Integer getUserId(String username);
 }
