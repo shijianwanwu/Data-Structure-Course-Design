@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.byr.project.domain.po.Building;
 import com.byr.project.domain.po.SchoolBuildings;
 import com.byr.project.domain.vo.BuildingVO;
+import com.byr.project.domain.vo.LineVO;
 import com.byr.project.service.IBuildingsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +44,7 @@ public class BuildingsController {
 
     @ApiOperation("寻找两点最短路径")
     @GetMapping("/point")
-    public List<Integer> findTheShortestPathBetweenTwoPoints(@RequestParam int startId, @RequestParam int endId,@RequestParam String category) {
+    public List<LineVO> findTheShortestPathBetweenTwoPoints(@RequestParam int startId, @RequestParam int endId,@RequestParam String category) {
         return iBuildingsService.findTheShortestPathBetweenTwoPoints(startId, endId,category);
     }
 
@@ -56,7 +57,7 @@ public class BuildingsController {
 
     @ApiOperation("寻找两点最短时间")
     @GetMapping("/time")
-    public List<Integer> findTheShortestTimeBetweenTwoPoints(@RequestParam int startId, @RequestParam int endId,@RequestParam String category) {
+    public List<LineVO> findTheShortestTimeBetweenTwoPoints(@RequestParam int startId, @RequestParam int endId, @RequestParam String category) {
         return iBuildingsService.findTheShortestTimeBetweenTwoPoints(startId, endId,category);
     }
 

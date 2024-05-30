@@ -52,11 +52,11 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
      * @param category
      * @return
      */
-    public List<Integer> findTheShortestPathBetweenTwoPoints(int startId, int endId, String category) {
+    public List<LineVO> findTheShortestPathBetweenTwoPoints(int startId, int endId, String category) {
         return findTheShortestPathBetweenTwoPoints(startId, endId, false, category);
     }
 
-    public List<Integer> findTheShortestPathBetweenTwoPoints(int startId, int endId, boolean timeBased, String category) {
+    public List<LineVO> findTheShortestPathBetweenTwoPoints(int startId, int endId, boolean timeBased, String category) {
         List<? extends Road> roadsList;
         List<? extends Building> BuildingsList;
         if (category.equals("校园")) {
@@ -114,6 +114,36 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
         }
         log.info("最短路径为：{}", lineVOS);
 
+        return lineVOS;
+    }
+    public List<Integer> findTheShortestPathBetweenTwoPointsReturnInteger(int startId, int endId, boolean timeBased, String category) {
+        List<? extends Road> roadsList;
+        List<? extends Building> BuildingsList;
+        if (category.equals("校园")) {
+            roadsList = Db.lambdaQuery(Schoolroads.class)
+                    .select(Schoolroads::getStartPoint, Schoolroads::getEndPoint, Schoolroads::getId, Schoolroads::getDistance, Schoolroads::getTime, Schoolroads::getVehicle)
+                    .list();
+            //得到所有建筑物信息
+            BuildingsList = Db.lambdaQuery(SchoolBuildings.class)
+                    .select(SchoolBuildings::getX, SchoolBuildings::getY, SchoolBuildings::getId)
+                    .list();
+        } else {
+            roadsList = Db.lambdaQuery(Sceneroads.class)
+                    .select(Sceneroads::getStartPoint, Sceneroads::getEndPoint, Sceneroads::getId, Sceneroads::getDistance, Sceneroads::getTime, Sceneroads::getVehicle)
+                    .list();
+            BuildingsList = Db.lambdaQuery(Scenebuildings.class)
+                    .select(Scenebuildings::getX, Scenebuildings::getY, Scenebuildings::getId)
+                    .list();
+        }
+
+        Graph graph;
+        if (timeBased) {
+            graph = Graph.fromListByTime(roadsList, BuildingsList);
+        } else {
+            graph = Graph.fromListByDistance(roadsList, BuildingsList);
+        }
+        // 返回最短路径上各路径的id
+        List<Integer> shortestPath = graph.shortestPath(startId, endId);
         return shortestPath;
     }
 
@@ -134,7 +164,7 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
     }
 
     @Override
-    public List<Integer> findTheShortestTimeBetweenTwoPoints(int startId, int endId, String category) {
+    public List<LineVO> findTheShortestTimeBetweenTwoPoints(int startId, int endId, String category) {
         return findTheShortestPathBetweenTwoPoints(startId, endId, true,category);
     }
 
@@ -161,7 +191,7 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
                 shortestPathLengths.put(building.getId(), 0.0);
                 continue;
             }
-            List<Integer> path = findTheShortestPathBetweenTwoPoints(startId, building.getId(), category);
+            List<Integer> path = findTheShortestPathBetweenTwoPointsReturnInteger(startId, building.getId(), false,category);
             shortestPathLengths.put(building.getId(), findTheShortestLength(path));
         }
 

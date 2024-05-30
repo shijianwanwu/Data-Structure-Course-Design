@@ -88,4 +88,11 @@ public class TraveldairyController {
             return Result.fail("未找到指定内容");
         }
     }
+
+    @ApiOperation("根据用户ID返回游学日记")
+    @GetMapping("/user")
+    public List<Traveldairy> getDiariesByUserId(@RequestParam Long userId) {
+        return iTraveldairyService.getDiariesByUserId(userId);
+    }
+
 }

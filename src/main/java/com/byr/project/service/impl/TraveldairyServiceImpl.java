@@ -114,4 +114,13 @@ public class TraveldairyServiceImpl extends ServiceImpl<TraveldairyMapper, Trave
         return null;
     }
 
+    @Override
+    public List<Traveldairy> getDiariesByUserId(Long userId) {
+        List<Traveldairy> list = lambdaQuery().eq(Traveldairy::getUserID, userId).list();
+        list.stream().forEach(traveldairy -> {
+            traveldairy.setDairy(Compress.decompress(DefaultPath, traveldairy.getDairyID() + "", traveldairy.getDairy()));
+        });
+        return list;
+    }
+
 }

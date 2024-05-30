@@ -3,6 +3,7 @@ package com.byr.project.service;
 import com.byr.project.domain.po.SchoolBuildings;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.byr.project.domain.vo.BuildingVO;
+import com.byr.project.domain.vo.LineVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface IBuildingsService extends IService<SchoolBuildings> {
      * @param category
      * @return
      */
-    List<Integer> findTheShortestPathBetweenTwoPoints(int startId, int endId, String category);
+    List<LineVO> findTheShortestPathBetweenTwoPoints(int startId, int endId, String category);
 
     /***
      * 寻找经过多点的最短路径
@@ -36,14 +37,14 @@ public interface IBuildingsService extends IService<SchoolBuildings> {
      */
     List<Integer> findTheShortestPathOfPoints(List<Integer> ids);
 
-    List<Integer> findTheShortestTimeBetweenTwoPoints(@Param("startId") int startId, @Param("endId") int endId, String category);
+    List<LineVO> findTheShortestTimeBetweenTwoPoints(@Param("startId") int startId, @Param("endId") int endId, String category);
 
     /**
      * 根据指定场所找到指定类别的建筑物,并按距离从小到大返回
      *
      * @param startId
      * @param category
-     * @param s
+     * @param buildingCategory
      * @return
      */
     List<BuildingVO> findTheNearestPlaces(int startId, String buildingCategory, String category);
