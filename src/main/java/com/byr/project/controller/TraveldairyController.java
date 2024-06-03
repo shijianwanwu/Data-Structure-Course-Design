@@ -114,6 +114,7 @@ public class TraveldairyController {
         content = content.replace("\"", "");
         //log.info(content);
         traveldairy.setDairy(content);
+        //log.info(traveldairy.getDairy());
         boolean flag = iTraveldairyService.updateById(traveldairy);
         if (flag) {
             return Result.success("更新成功");
