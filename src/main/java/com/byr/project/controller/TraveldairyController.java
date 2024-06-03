@@ -95,4 +95,31 @@ public class TraveldairyController {
         return iTraveldairyService.getDiariesByUserId(userId);
     }
 
+    @ApiOperation("根据id删除日记")
+    @DeleteMapping("/{id}")
+    public Result deleteDiaryById(@PathVariable Long id) {
+        boolean flag = iTraveldairyService.removeById(id);
+
+        if (flag) {
+            return Result.success("删除成功");
+        }
+        return Result.fail("删除失败");
+    }
+
+    @ApiOperation("更新日记接口传ID加更新后的内容")
+    @PutMapping("/{id}")
+    public Result updateDiary(@PathVariable Integer id, @RequestBody String content) {
+        Traveldairy traveldairy = iTraveldairyService.getById(id);
+        // 去除字符串的双引号
+        content = content.replace("\"", "");
+        //log.info(content);
+        traveldairy.setDairy(content);
+        boolean flag = iTraveldairyService.updateById(traveldairy);
+        if (flag) {
+            return Result.success("更新成功");
+        }
+        return Result.fail("更新失败");
+    }
+
+
 }

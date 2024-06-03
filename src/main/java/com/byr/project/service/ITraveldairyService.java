@@ -29,4 +29,8 @@ public interface ITraveldairyService extends IService<Traveldairy> {
     Traveldairy findDiaryByContent(Long id, String content);
 
     List<Traveldairy> getDiariesByUserId(Long userId);
+
+    boolean removeById(Long id);
+
+    boolean updateById(Traveldairy traveldairy);
 }

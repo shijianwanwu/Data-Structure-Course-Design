@@ -10,6 +10,13 @@ public class Compress {
 
     }
 
+    public static void delete(String defaultPath, String s) {
+        File file = new File(defaultPath, s + ".bin");
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
     //哈夫曼节点
     private static class Node implements Comparable<Node> {
         char character;

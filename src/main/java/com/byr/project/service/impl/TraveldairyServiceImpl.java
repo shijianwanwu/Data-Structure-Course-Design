@@ -123,4 +123,32 @@ public class TraveldairyServiceImpl extends ServiceImpl<TraveldairyMapper, Trave
         return list;
     }
 
+    @Override
+    public boolean updateById(Traveldairy traveldairy) {
+        //更新日记内容
+        String dairy = traveldairy.getDairy();
+        traveldairy.setDairy("");
+        int i = baseMapper.updateById(traveldairy);
+        if (i > 0) {
+            String compressedContent = null;
+            try {
+                compressedContent = Compress.compress(dairy, DefaultPath, traveldairy.getDairyID()+"");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            traveldairy.setDairy(compressedContent);
+            baseMapper.updateById(traveldairy);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeById(Long id) {
+        int i = baseMapper.deleteById(id);
+        //删除DefaultPath下以id为名后缀为.bin的文件
+        Compress.delete(DefaultPath, id+"");
+        return i > 0;
+    }
+
 }

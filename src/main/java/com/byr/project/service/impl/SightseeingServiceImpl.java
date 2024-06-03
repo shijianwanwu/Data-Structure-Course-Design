@@ -34,7 +34,7 @@ public class SightseeingServiceImpl extends ServiceImpl<SightseeingMapper, Sight
                 .eq(category != null, Sightseeing::getCategory, category)
                 .list();
 
-        log.info(sightseeingList.toString());
+        //log.info(sightseeingList.toString());
         // 创建一个小顶堆
         //评价越高,热度越高的越好
         PriorityQueue<Sightseeing> heap = new PriorityQueue<>(10, Comparator
