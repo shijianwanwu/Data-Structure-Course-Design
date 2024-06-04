@@ -32,10 +32,13 @@ public interface IBuildingsService extends IService<SchoolBuildings> {
 
     /***
      * 寻找经过多点的最短路径
+     *
+     * @param start
      * @param ids
+     * @param category
      * @return
      */
-    List<Integer> findTheShortestPathOfPoints(List<Integer> ids);
+    List<LineVO> findTheShortestPathOfPoints(Integer start, List<Integer> ids, String category);
 
     List<LineVO> findTheShortestTimeBetweenTwoPoints(@Param("startId") int startId, @Param("endId") int endId, String category);
 
@@ -52,4 +55,6 @@ public interface IBuildingsService extends IService<SchoolBuildings> {
     List<BuildingVO> findThePlaceByName(String name, String category);
 
     List<BuildingVO> queryAllBuildings(String category);
+
+    List<LineVO> findTheShortestTimeOfPoints(Integer start, List<Integer> ids, String category);
 }

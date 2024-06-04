@@ -50,9 +50,15 @@ public class BuildingsController {
 
     @ApiOperation("寻找多点最短路径")
     @GetMapping("/points")
-    public List<Integer> findTheShortestPathOfPoints(@RequestParam List<Integer> ids) {
+    public List<LineVO> findTheShortestPathOfPoints(@RequestParam Integer start,@RequestParam List<Integer> ids,@RequestParam String category) {
         log.info(ids + "");
-        return iBuildingsService.findTheShortestPathOfPoints(ids);
+        return iBuildingsService.findTheShortestPathOfPoints(start,ids,category);
+    }
+
+    @ApiOperation("寻找多点最短时间")
+    @GetMapping("/times")
+    public List<LineVO> findTheShortestTimeOfPoints(@RequestParam Integer start,@RequestParam List<Integer> ids,@RequestParam String category) {
+        return iBuildingsService.findTheShortestTimeOfPoints(start,ids,category);
     }
 
     @ApiOperation("寻找两点最短时间")

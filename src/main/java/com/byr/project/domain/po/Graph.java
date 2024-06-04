@@ -13,6 +13,8 @@ public class Graph {
     private Map<Integer, List<Edge>> edges = new HashMap<>();
     // 存储图的顶点，键为顶点id，值为顶点对象
     private Map<Integer, Vertex> vertices = new HashMap<>();
+    // 存储图的边，键为roadId，值为对应的边
+    private Map<Integer, Edge> roadIdToEdge = new HashMap<>();
 
 // 添加一条边到图中
 public void addEdge(int start, int end, BigDecimal distance, int roadId, double startX, double startY, double endX, double endY) {
@@ -39,6 +41,11 @@ public void addEdge(int start, int end, BigDecimal distance, int roadId, double 
     }
     // 添加新的边
     endEdges.add(new Edge(end, start, distance, roadId));
+    
+    // 添加新的边
+    Edge newEdge = new Edge(start, end, distance, roadId);
+    startEdges.add(newEdge);
+    roadIdToEdge.put(roadId, newEdge);
 
     // 如果起始顶点不存在，则添加
     vertices.putIfAbsent(start, new Vertex(start, startX, startY));
@@ -104,6 +111,89 @@ public void addEdge(int start, int end, BigDecimal distance, int roadId, double 
         // 如果没有找到路径，返回null
         return null;
     }
+    public BigDecimal getPathLength(List<Integer> path) {
+        BigDecimal totalLength = BigDecimal.ZERO;
+        for (int roadId : path) {
+            Edge edge = roadIdToEdge.get(roadId);
+            if (edge != null) {
+                totalLength = totalLength.add(edge.distance);
+                log.info("从点 " + edge.start + " 到点 " + edge.end + " 的距离是: " + edge.distance);
+            } else {
+                log.warn("未找到roadId为 " + roadId + " 的边");
+            }
+        }
+        log.info("路径的总长度是: " + totalLength);
+        return totalLength;
+    }
+
+
+    public List<Integer> shortestPathMultiplePoints(List<Integer> points) {
+        int n = points.size();
+        BigDecimal[][] dist = new BigDecimal[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                List<Integer> path = shortestPath(points.get(i), points.get(j));
+                dist[i][j] = dist[j][i] = path == null ? BigDecimal.valueOf(Double.MAX_VALUE) : getPathLength(path);
+                log.info("从点 " + points.get(i) + " 到点 " + points.get(j) + " 的最短路径是: " + path);
+                log.info("从点 " + points.get(i) + " 到点 " + points.get(j) + " 的最短距离是: " + dist[i][j]);
+            }
+        }
+    
+        BigDecimal[][] dp = new BigDecimal[1 << n][n];
+        int[][] path = new int[1 << n][n];
+        BigDecimal INF = BigDecimal.valueOf(Double.MAX_VALUE);
+    
+        for (BigDecimal[] row : dp) {
+            Arrays.fill(row, INF);
+        }
+        for (int i = 0; i < n; i++) {
+            dp[1 << i][i] = BigDecimal.ZERO;
+        }
+    
+        for (int mask = 0; mask < (1 << n); mask++) {
+            for (int end = 0; end < n; end++) {
+                if ((mask & (1 << end)) == 0) continue;
+                int prevMask = mask ^ (1 << end);
+                if (prevMask == 0) continue;
+                for (int next = 0; next < n; next++) {
+                    if ((mask & (1 << next)) == 0 || end == next) continue;
+                    if (dp[mask][end].compareTo(dp[prevMask][next].add(dist[next][end])) > 0) {
+                        dp[mask][end] = dp[prevMask][next].add(dist[next][end]);
+                        path[mask][end] = next;
+                    }
+                }
+            }
+        }
+    
+        // 重建路径
+        int last = (1 << n) - 1;
+        BigDecimal minCost = INF;
+        int lastNode = -1;
+        for (int i = 0; i < n; i++) {
+            if (minCost.compareTo(dp[last][i]) > 0) {
+                minCost = dp[last][i];
+                lastNode = i;
+            }
+        }
+    
+        LinkedList<Integer> shortestPath = new LinkedList<>();
+        int state = last;
+        while (state > 0) {
+            shortestPath.addFirst(points.get(lastNode));
+            int temp = lastNode;
+            lastNode = path[state][lastNode];
+            state = state ^ (1 << temp);
+        }
+    
+        // 将起点再次加入路径中形成环
+        shortestPath.addLast(shortestPath.getFirst());
+    
+        log.info("多点之间的最短总距离是: " + minCost);
+        log.info("多点之间的最短路径顺序是: " + shortestPath);
+        return shortestPath;
+    }
+
+    
 
     // 计算从start到end的启发式距离（直线距离）
     private BigDecimal heuristicCostEstimate(int start, int end) {

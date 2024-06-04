@@ -25,7 +25,7 @@ public class JsonToSceneRoad {
             Map<String, List<Map<String, Object>>> adjList = (Map<String, List<Map<String, Object>>>) map.get("adjList");
 
             try (Connection conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/project?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true", "root", "lrp123456")) { // 替换为你的数据库连接信息
-                String sql = "INSERT INTO sceneroads (start_point, end_point, distance) VALUES (?, ?, ?)";
+                String sql = "INSERT INTO newschoolroads (start_point, end_point, distance) VALUES (?, ?, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
 
                 for (String key : adjList.keySet()) {
