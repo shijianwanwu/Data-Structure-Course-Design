@@ -23,6 +23,7 @@ public class CorsConfig {
         config.addAllowedMethod("GET");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("POST");
+        config.addAllowedMethod("PATCH");
         config.addAllowedMethod("DELETE");
         // 4）允许的头信息
         config.addAllowedHeader("*");

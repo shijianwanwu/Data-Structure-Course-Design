@@ -58,9 +58,9 @@ public class RestaurantFoodsServiceImpl extends ServiceImpl<RestaurantFoodsMappe
     @Override
     public List<RestaurantFoods> queryFoods(String foodsName, String foodsCuisine, String restaurantName) {
         List<RestaurantFoods> restaurantFoodsList = lambdaQuery()
-                .eq(foodsName != null, RestaurantFoods::getFoodsName, foodsName)
+                .like(foodsName != null, RestaurantFoods::getFoodsName, foodsName)
                 .eq(foodsCuisine != null, RestaurantFoods::getFoodsCuisine, foodsCuisine)
-                .eq(restaurantName != null, RestaurantFoods::getRestaurantName, restaurantName)
+                .like(restaurantName != null, RestaurantFoods::getRestaurantName, restaurantName)
                 .orderByDesc(RestaurantFoods::getFoodsRating,RestaurantFoods::getFoodsHeat)
                 .orderByAsc(RestaurantFoods::getRestaurantDistance)
                 .list();

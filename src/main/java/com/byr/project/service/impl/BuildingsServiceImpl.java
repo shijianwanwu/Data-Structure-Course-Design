@@ -233,12 +233,12 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
         List<BuildingVO> BuildingsList;
         if (category.equals("校园")) {
             List<SchoolBuildings> schoolBuildingsList = Db.lambdaQuery(SchoolBuildings.class)
-                    .eq(name != null, SchoolBuildings::getName, name)
+                    .like(name != null, SchoolBuildings::getName, name)
                     .list();
             BuildingsList = BeanUtil.copyToList(schoolBuildingsList, BuildingVO.class);
         } else {
             List<Scenebuildings> sceneBuildingsList = Db.lambdaQuery(Scenebuildings.class)
-                    .eq(name != null, Scenebuildings::getName, name)
+                    .like(name != null, Scenebuildings::getName, name)
                     .list();
             BuildingsList = BeanUtil.copyToList(sceneBuildingsList, BuildingVO.class);
         }
