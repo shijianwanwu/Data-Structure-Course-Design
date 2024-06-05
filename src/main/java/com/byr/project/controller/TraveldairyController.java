@@ -108,7 +108,8 @@ public class TraveldairyController {
 
     @ApiOperation("更新日记接口传ID加更新后的内容")
     @PutMapping("/{id}")
-    public Result updateDiary(@PathVariable Integer id, @RequestBody String content) {
+    public Result updateDiary(@PathVariable Integer id, @RequestBody Traveldairy dairyVO) {
+        String content = dairyVO.getDairy();
         Traveldairy traveldairy = iTraveldairyService.getById(id);
         // 去除字符串的双引号
         content = content.replace("\"", "");
