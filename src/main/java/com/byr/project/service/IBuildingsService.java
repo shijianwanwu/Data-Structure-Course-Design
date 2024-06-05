@@ -57,4 +57,6 @@ public interface IBuildingsService extends IService<SchoolBuildings> {
     List<BuildingVO> queryAllBuildings(String category);
 
     List<LineVO> findTheShortestTimeOfPoints(Integer start, List<Integer> ids, String category);
+
+    List<LineVO> getAllRoads(String category);
 }

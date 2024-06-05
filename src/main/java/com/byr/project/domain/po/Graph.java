@@ -82,7 +82,7 @@ public void addEdge(int start, int end, BigDecimal distance, int roadId, double 
                 // 通过cameFrom回溯找到最短路径
                 while (cameFrom.containsKey(currentNode)) {
                     path.add(cameFrom.get(currentNode).roadId);
-                    log.info("最短路径中的顶点id: " + currentNode);
+                    //log.info("最短路径中的顶点id: " + currentNode);
                     currentNode = cameFrom.get(currentNode).start;
                 }
                 Collections.reverse(path);
@@ -117,12 +117,12 @@ public void addEdge(int start, int end, BigDecimal distance, int roadId, double 
             Edge edge = roadIdToEdge.get(roadId);
             if (edge != null) {
                 totalLength = totalLength.add(edge.distance);
-                log.info("从点 " + edge.start + " 到点 " + edge.end + " 的距离是: " + edge.distance);
+                //log.info("从点 " + edge.start + " 到点 " + edge.end + " 的距离是: " + edge.distance);
             } else {
-                log.warn("未找到roadId为 " + roadId + " 的边");
+                //log.warn("未找到roadId为 " + roadId + " 的边");
             }
         }
-        log.info("路径的总长度是: " + totalLength);
+        //log.info("路径的总长度是: " + totalLength);
         return totalLength;
     }
 
@@ -134,8 +134,8 @@ public void addEdge(int start, int end, BigDecimal distance, int roadId, double 
             for (int j = i + 1; j < n; j++) {
                 List<Integer> path = shortestPath(points.get(i), points.get(j));
                 dist[i][j] = dist[j][i] = path == null ? BigDecimal.valueOf(Double.MAX_VALUE) : getPathLength(path);
-                log.info("从点 " + points.get(i) + " 到点 " + points.get(j) + " 的最短路径是: " + path);
-                log.info("从点 " + points.get(i) + " 到点 " + points.get(j) + " 的最短距离是: " + dist[i][j]);
+                //log.info("从点 " + points.get(i) + " 到点 " + points.get(j) + " 的最短路径是: " + path);
+                //log.info("从点 " + points.get(i) + " 到点 " + points.get(j) + " 的最短距离是: " + dist[i][j]);
             }
         }
     
@@ -188,8 +188,8 @@ public void addEdge(int start, int end, BigDecimal distance, int roadId, double 
         // 将起点再次加入路径中形成环
         shortestPath.addLast(shortestPath.getFirst());
     
-        log.info("多点之间的最短总距离是: " + minCost);
-        log.info("多点之间的最短路径顺序是: " + shortestPath);
+        //log.info("多点之间的最短总距离是: " + minCost);
+        //log.info("多点之间的最短路径顺序是: " + shortestPath);
         return shortestPath;
     }
 

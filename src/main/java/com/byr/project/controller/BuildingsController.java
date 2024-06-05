@@ -67,10 +67,16 @@ public class BuildingsController {
         return iBuildingsService.findTheShortestTimeBetweenTwoPoints(startId, endId,category);
     }
 
+    @ApiOperation("返回所有地图边")
+    @GetMapping("/allRoads")
+    public List<LineVO> getAllRoads(@RequestParam String category) {
+        return iBuildingsService.getAllRoads(category);
+    }
+
 
     @ApiOperation("选中场所根据类别查询")
     @GetMapping("/category")
-    public List<BuildingVO> findTheNearestPlace(@RequestParam int startId, @ApiParam("建筑物类别")@RequestParam String buildingCategory,@ApiParam("类别")@RequestParam String category) {
+    public List<BuildingVO> findTheNearestPlace(@RequestParam int startId, @ApiParam("建筑物类别")@RequestParam(required = false) String buildingCategory,@ApiParam("类别")@RequestParam String category) {
         return iBuildingsService.findTheNearestPlaces(startId,buildingCategory, category);
     }
 
