@@ -1,6 +1,7 @@
 package com.byr.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.byr.project.domain.po.*;
 import com.byr.project.domain.vo.BuildingVO;
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,13 +57,15 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
     public List<LineVO> findTheShortestPathBetweenTwoPoints(int startId, int endId, String category) {
         return findTheShortestPathBetweenTwoPoints(startId, endId, false, category);
     }
+
     /**
      * 建图函数
+     *
      * @param timeBased 为真时按照时间建图，为假时按照距离建图
      * @param category
      * @return
      */
-    public Graph makeGraph(boolean timeBased, String category){
+    public Graph makeGraph(boolean timeBased, String category) {
         List<? extends Road> roadsList;
         List<? extends Building> BuildingsList;
         if (category.equals("校园")) {
@@ -89,6 +93,7 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
         }
         return graph;
     }
+
     public List<? extends Road> getRoadsListByCategory(String category) {
         if (category.equals("校园")) {
             return Db.lambdaQuery(Schoolroads.class)
@@ -112,6 +117,7 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
                     .list();
         }
     }
+
     public List<LineVO> generateLineVOs(List<Integer> Path, List<? extends Road> roadsList, List<? extends Building> BuildingsList) {
         List<Road> shortestPathRoads = Path.stream()
                 .map(id -> roadsList.stream()
@@ -119,7 +125,7 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
                         .findFirst()
                         .orElse(null))
                 .collect(Collectors.toList());
-        log.info("最短路径为：{}", shortestPathRoads);
+        //log.info("最短路径为：{}", shortestPathRoads);
         List<LineVO> lineVOS = new ArrayList<>();
         for (Road road : shortestPathRoads) {
             Building startBuilding = BuildingsList.stream()
@@ -133,15 +139,16 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
                     .orElse(null);
 
             if (startBuilding != null && endBuilding != null) {
-                lineVOS.add(new LineVO(startBuilding.getX(), startBuilding.getY(), endBuilding.getX(), endBuilding.getY(),road.getVehicle()));
+                lineVOS.add(new LineVO(startBuilding.getX(), startBuilding.getY(), endBuilding.getX(), endBuilding.getY(), road.getVehicle()));
             }
         }
-        log.info("最短路径为：{}", lineVOS);
+        //log.info("最短路径为：{}", lineVOS);
 
         return lineVOS;
     }
+
     public List<LineVO> findTheShortestPathBetweenTwoPoints(int startId, int endId, boolean timeBased, String category) {
-        Graph graph=makeGraph(timeBased, category);
+        Graph graph = makeGraph(timeBased, category);
         List<? extends Road> roadsList = getRoadsListByCategory(category);
         List<? extends Building> BuildingsList = getBuildingsListByCategory(category);
         // 返回最短路径上各路径的id
@@ -153,14 +160,14 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
     }
 
     public List<Integer> findTheShortestPathBetweenTwoPointsReturnInteger(int startId, int endId, boolean timeBased, String category) {
-        Graph graph=makeGraph(timeBased, category);
+        Graph graph = makeGraph(timeBased, category);
         // 返回最短路径上各路径的id
         List<Integer> shortestPath = graph.shortestPath(startId, endId);
         return shortestPath;
     }
 
-    public List<LineVO> findTheShortestPathOfPoints(Integer start, List<Integer> ids,  boolean timeBased,String category) {
-        Graph graph=makeGraph(timeBased, category);
+    public List<LineVO> findTheShortestPathOfPoints(Integer start, List<Integer> ids, boolean timeBased, String category) {
+        Graph graph = makeGraph(timeBased, category);
         List<? extends Road> list = getRoadsListByCategory(category);
         List<? extends Building> buildingsList = getBuildingsListByCategory(category);
         List<Integer> points = graph.shortestPathMultiplePoints(ids);
@@ -182,14 +189,20 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
 
     @Override
     public List<LineVO> findTheShortestTimeBetweenTwoPoints(int startId, int endId, String category) {
-        return findTheShortestPathBetweenTwoPoints(startId, endId, true,category);
+        return findTheShortestPathBetweenTwoPoints(startId, endId, true, category);
     }
 
     @Override
     public List<LineVO> findTheShortestTimeOfPoints(Integer start, List<Integer> ids, String category) {
-        return findTheShortestPathOfPoints(start, ids, true,category);
+        return findTheShortestPathOfPoints(start, ids, true, category);
     }
 
+    @Override
+    public List<LineVO> getAllRoads(String category) {
+        List<? extends Road> roadsList = getRoadsListByCategory(category);
+        List<? extends Building> BuildingsList = getBuildingsListByCategory(category);
+        return generateLineVOs(roadsList.stream().map(Road::getId).collect(Collectors.toList()), roadsList, BuildingsList);
+    }
 
 
     @Override
@@ -200,7 +213,6 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
                     .select()
                     .eq(buildingCategory != null, SchoolBuildings::getCategory, buildingCategory)
                     .list();
-            System.out.println(BuildingsList.size());
         } else {
             BuildingsList = Db.lambdaQuery(Scenebuildings.class)
                     .select()
@@ -215,15 +227,18 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
                 shortestPathLengths.put(building.getId(), 0.0);
                 continue;
             }
-            List<Integer> path = findTheShortestPathBetweenTwoPointsReturnInteger(startId, building.getId(), false,category);
-            shortestPathLengths.put(building.getId(), findTheShortestLength(path));
+            List<Integer> path = findTheShortestPathBetweenTwoPointsReturnInteger(startId, building.getId(), false, category);
+            shortestPathLengths.put(building.getId(), findTheShortestLength(path, category));
         }
 
         //根据预先计算的最短路径长度进行排序
         BuildingsList = BuildingsList.stream()
                 .sorted(Comparator.comparing(building -> shortestPathLengths.get(building.getId())))
                 .collect(Collectors.toList());
-
+        //只要最短的前十名，不足则返回全部
+        if (BuildingsList.size() > 10) {
+            BuildingsList = BuildingsList.subList(0, 10);
+        }
         List<BuildingVO> buildingVOS = BeanUtil.copyToList(BuildingsList, BuildingVO.class);
         return buildingVOS;
     }
@@ -261,12 +276,14 @@ public class BuildingsServiceImpl extends ServiceImpl<BuildingsMapper, SchoolBui
     }
 
 
-
-    public double findTheShortestLength(List<Integer> ids) {
-        List<Schoolroads> schoolroadsList = Db.lambdaQuery(Schoolroads.class).in(Schoolroads::getId, ids).list();
+    public double findTheShortestLength(List<Integer> ids, String category) {
+        List<? extends Road> roadsList = getRoadsListByCategory(category)
+                .stream()
+                .filter(road -> ids.contains(road.getId()))
+                .collect(Collectors.toList());
         Double sum = 0.0;
-        for (Schoolroads road :
-                schoolroadsList) {
+        for (Road road :
+                roadsList) {
             sum += road.getDistance().doubleValue();
         }
         return sum;
